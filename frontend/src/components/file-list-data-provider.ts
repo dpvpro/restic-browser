@@ -122,7 +122,7 @@ export class FileListDataProvider {
           return (sortOrder.direction === "asc") ? 1 : -1;
         }
         // and do a "natural" sort on names
-        const options = { numeric: true, sensitivity: "base" };
+        const options: Intl.CollatorOptions = { numeric: true, sensitivity: "base" };
         if (sortOrder.direction === 'asc') {
           return a.name.localeCompare(b.name, undefined, options);
         } else { 
