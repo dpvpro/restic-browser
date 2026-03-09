@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -80,7 +79,7 @@ func (r *ResticBrowserApp) Startup(ctx context.Context) {
 	// memorize context
 	r.context = &ctx
 	// create app temp dir
-	tempPath, err := ioutil.TempDir(os.TempDir(), "restic-browser")
+	tempPath, err := os.MkdirTemp(os.TempDir(), "restic-browser")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to create app temp dir: %s\n", err.Error())
 	}
@@ -131,7 +130,7 @@ func readTextFile(filename string) ([]byte, error) {
 		bomUTF16BigEndian    = []byte{0xfe, 0xff}
 		bomUTF16LittleEndian = []byte{0xff, 0xfe}
 	)
-	data, err := ioutil.ReadFile(filename)
+	data, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}
@@ -382,7 +381,7 @@ func (r *ResticBrowserApp) DumpFileToTemp(snapshotID string, file *restic.File) 
 	if snapshot == nil {
 		return "", fmt.Errorf("%s is not a valid snapshot ID", snapshotID)
 	}
-	targetPath, err := ioutil.TempDir(r.tempPath, "dump")
+	targetPath, err := os.MkdirTemp(r.tempPath, "dump")
 	if err != nil {
 		return "", err
 	}

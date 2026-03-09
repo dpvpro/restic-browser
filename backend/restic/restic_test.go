@@ -2,7 +2,6 @@ package restic
 
 import (
 	"fmt"
-	"io/ioutil"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -16,9 +15,9 @@ func getBasePath() string {
 	if err != nil {
 		panic(err)
 	}
-	for _, err := ioutil.ReadFile(filepath.Join(dir, "go.mod")); err != nil && len(dir) > 1; {
+	for _, err := os.ReadFile(filepath.Join(dir, "go.mod")); err != nil && len(dir) > 1; {
 		dir = filepath.Dir(dir)
-		_, err = ioutil.ReadFile(filepath.Join(dir, "go.mod"))
+		_, err = os.ReadFile(filepath.Join(dir, "go.mod"))
 	}
 	if len(dir) < 2 {
 		panic("No go.mod found")
@@ -159,7 +158,7 @@ func TestResticFileDump(t *testing.T) {
 	if err != nil || len(restoredFilePath) == 0 {
 		t.Fatal("failed to restore file")
 	}
-	restoredFile, err := ioutil.ReadFile(restoredFilePath)
+	restoredFile, err := os.ReadFile(restoredFilePath)
 	if err != nil || len(restoredFile) == 0 {
 		t.Error("failed to read restored file")
 	}
