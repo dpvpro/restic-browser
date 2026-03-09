@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "typescript": "^4.5.4",
-    "vite": "^3.0.0"
+    "vite": "^7.0.0"
   },
   "vaadin": {
     "disableUsageStatistics": true
