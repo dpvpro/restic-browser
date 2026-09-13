@@ -20,7 +20,7 @@ export class ResticBrowserAppFooter extends MobxLitElement {
   constructor() {
     super();
 
-    let messageTimeoutId: number | undefined = undefined;
+    let messageTimeoutId: ReturnType<typeof setTimeout> | undefined = undefined;
     mobx.autorun(() => {
       let newMessage = "";
       if (appState.pendingFileDumps.length) {
