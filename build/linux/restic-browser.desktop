@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=Restic-Browser
-Exec=Restic-Browser
+Exec=restic-browser
 Icon=Restic-Browser
 Categories=Development;
 Terminal=false

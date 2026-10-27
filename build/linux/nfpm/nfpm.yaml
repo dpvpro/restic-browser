@@ -17,12 +17,12 @@ license: "MIT"
 release: "1"
 
 contents:
-  - src: "./bin/Restic-Browser"
-    dst: "/usr/local/bin/Restic-Browser"
+  - src: "./bin/restic-browser"
+    dst: "/usr/local/bin/restic-browser"
   - src: "./build/appicon.png"
     dst: "/usr/share/icons/hicolor/128x128/apps/Restic-Browser.png"
-  - src: "./build/linux/Restic-Browser.desktop"
-    dst: "/usr/share/applications/Restic-Browser.desktop"
+  - src: "./build/linux/restic-browser.desktop"
+    dst: "/usr/share/applications/restic-browser.desktop"
 
 # Default dependencies for the GTK4 + WebKitGTK 6.0 stack (Ubuntu 24.04+ / Debian 13+)
 depends:

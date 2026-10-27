@@ -34,7 +34,7 @@ wails3 dev
 wails3 build
 ```
 
-Результат — `bin/Restic-Browser`. Production-ассеты фронтенда встраиваются в бинарник.
+Результат — `bin/restic-browser`. Production-ассеты фронтенда встраиваются в бинарник.
 
 Перед сборкой задача автоматически:
 
@@ -46,8 +46,8 @@ wails3 build
 Запуск собранного бинарника:
 
 ```bash
-./bin/Restic-Browser
-./bin/Restic-Browser --restic=/usr/bin/restic
+./bin/restic-browser
+./bin/restic-browser --restic=/usr/bin/restic
 ```
 
 ## Пакеты для распространения
@@ -61,6 +61,8 @@ wails3 package
 - **Linux** — AppImage, deb, rpm (и файлы для AUR);
 - **Windows** — NSIS/MSIX;
 - **macOS** — `.app`, DMG.
+
+Linux-пакеты устанавливают бинарник как `/usr/local/bin/restic-browser` и `.desktop`-файл как `restic-browser.desktop`.
 
 Артефакты складываются в `bin/` и `build/`.
 
@@ -93,10 +95,10 @@ wails3 dev
 
 ## Отладка Go-кода
 
-В `.vscode/launch.json` есть конфигурация `Debug Restic-Browser (GO)`. По `F5` выполняется задача `wails3 build DEV=true`, затем запускается `bin/Restic-Browser` с переменными для тестового репозитория (`backend/restic/test-repo`).
+В `.vscode/launch.json` есть конфигурация `Debug Restic-Browser (GO)`. По `F5` выполняется задача `wails3 build DEV=true`, затем запускается `bin/restic-browser` с переменными для тестового репозитория (`backend/restic/test-repo`).
 
 ## Примечания
 
-- `wails3 dev` не пробрасывает свои аргументы приложению. Если нужен нестандартный `--restic`, используйте собранный `./bin/Restic-Browser --restic=...`.
+- `wails3 dev` не пробрасывает свои аргументы приложению. Если нужен нестандартный `--restic`, используйте собранный `./bin/restic-browser --restic=...`.
 - Биндинги в `frontend/bindings` генерируются автоматически; при изменении сигнатур экспортируемых методов Go их нужно перегенерировать (команда выше).
 - В dev-режиме после полной перезагрузки страницы приложение может показать «No repository selected» — репозиторий откроется кнопкой **Open Repository** или после перезапуска `wails3 dev`.

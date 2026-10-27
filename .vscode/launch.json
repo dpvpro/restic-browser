@@ -13,13 +13,13 @@
         "RESTIC_PASSWORD": "test-repo-pass"
       },
       "linux": {
-        "program": "${workspaceFolder}/bin/Restic-Browser"
+        "program": "${workspaceFolder}/bin/restic-browser"
       },
       "osx": {
         "program": "${workspaceFolder}/bin/Restic-Browser.app/Contents/MacOS/Restic-Browser"
       },
       "windows": {
-        "program": "${workspaceFolder}/bin/Restic-Browser.exe"
+        "program": "${workspaceFolder}/bin/restic-browser.exe"
       }
     }
   ]

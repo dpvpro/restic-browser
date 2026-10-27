@@ -46,7 +46,7 @@ The UI is navigatable via keyboard shortcuts. To change the focus area, hit `Tab
 
 #### All platforms
 - Install [restic](https://github.com/restic/restic/releases/) and *make sure it is included in your $PATH* or 
-pass the path to the restic executable *as argument*: `Restic-Browser[.exe] --restic="PATH/TO/restic[.exe]"`.
+pass the path to the restic executable *as argument*: `restic-browser[.exe] --restic="PATH/TO/restic[.exe]"`.
 
 #### Windows:
 - Windows 10 or later with [WebView2 Runtime](https://developer.microsoft.com/de-de/microsoft-edge/webview2/#download-section)
