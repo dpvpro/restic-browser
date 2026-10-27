@@ -46,7 +46,7 @@ func IsDirectoryARepository(basedir string) bool {
 func (r *Repository) GetSnapshots() ([]*Snapshot, error) {
 	stdout, stderr, code, err := r.run("snapshots", "--json")
 	if code != 0 || err != nil {
-		return nil, fmt.Errorf(stderr)
+		return nil, fmt.Errorf("%s", stderr)
 	}
 	var snapshots []*Snapshot
 	if stdout == "null" {
@@ -67,7 +67,7 @@ func (r *Repository) GetFiles(snapshot *Snapshot, path string) ([]*File, error) 
 
 	stdout, stderr, code, _ := r.run("ls", snapshot.ID, "--json", path)
 	if code != 0 {
-		return nil, fmt.Errorf(stderr)
+		return nil, fmt.Errorf("%s", stderr)
 	}
 	if stdout == "null" {
 		return nil, fmt.Errorf("no files in path: '%s'", path)
@@ -98,7 +98,7 @@ func (r *Repository) RestoreFile(snapshot *Snapshot, file *File, targetPath stri
 
 	_, stderr, code, _ := r.run("restore", snapshot.ID, "--target", targetPath, "--include", file.Path)
 	if code != 0 {
-		return "", fmt.Errorf(stderr)
+		return "", fmt.Errorf("%s", stderr)
 	}
 	return filepath.Join(targetPath, file.Path), nil
 }
@@ -134,7 +134,7 @@ func (r *Repository) DumpFile(snapshot *Snapshot, file *File, targetPath string)
 	// run restic cmd
 	stderr, code, _ := r.runRedirected(targetFile, "dump", "-a", "zip", snapshot.ID, file.Path)
 	if code != 0 {
-		return "", fmt.Errorf(stderr)
+		return "", fmt.Errorf("%s", stderr)
 	}
 	return targetFileName, nil
 }

@@ -1,9 +1,9 @@
 import * as mobx from 'mobx';
 
 import { DefaultRepoLocation, DumpFile, DumpFileToTemp, GetFilesForPath, OpenFileOrUrl, OpenRepo, RestoreFile }
-  from '../../wailsjs/go/main/ResticBrowserApp';
+  from '../../bindings/restic-browser/resticbrowserapp';
 
-import { restic } from '../../wailsjs/go/models';
+import { restic } from '../models';
 
 import { Location } from './location';
 
@@ -66,12 +66,13 @@ class AppState {
     this.repoError = "";
     OpenRepo(restic.Location.createFrom(this.repoLocation))
       .then(mobx.action((result) => {
+        const snapshots = result.filter((s): s is restic.Snapshot => s !== null);
         this.repoError = "";
-        this.snapShots = result;
-        if (! result.find((s) => s.short_id === this.selectedSnapshotID)) {
+        this.snapShots = snapshots;
+        if (! snapshots.find((s) => s.short_id === this.selectedSnapshotID)) {
           this.selectedSnapshotID = "";
-          if (result.length) {
-            this.selectedSnapshotID = result[0].id;
+          if (snapshots.length) {
+            this.selectedSnapshotID = snapshots[0].id;
           }
         }
         this._filesCache.clear();
@@ -110,11 +111,12 @@ class AppState {
     } 
     // else fetch new ones and cache them
     ++this.isLoadingFiles;
-    return GetFilesForPath(this.selectedSnapshotID, rootPath || "/")
+    return Promise.resolve(GetFilesForPath(this.selectedSnapshotID, rootPath || "/"))
       .then(mobx.action((files) => {
+        const result = files.filter((f): f is restic.File => f !== null);
         --this.isLoadingFiles;
-        this._addCachedFiles(selectedSnapshotID, rootPath, files);
-        return files;
+        this._addCachedFiles(selectedSnapshotID, rootPath, result);
+        return result;
       }))
       .catch(mobx.action((error) => {
         --this.isLoadingFiles;

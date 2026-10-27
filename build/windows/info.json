@@ -1,15 +1,15 @@
 {
 	"fixed": {
-		"file_version": "{{.Info.ProductVersion}}"
+		"file_version": "0.2.6"
 	},
 	"info": {
-		"0000": {
-			"ProductVersion": "{{.Info.ProductVersion}}",
-			"CompanyName": "{{.Info.CompanyName}}",
-			"FileDescription": "{{.Info.ProductName}}",
-			"LegalCopyright": "{{.Info.Copyright}}",
-			"ProductName": "{{.Info.ProductName}}",
-			"Comments": "{{.Info.Comments}}"
+		"0409": {
+			"ProductVersion": "0.2.6",
+			"CompanyName": "The Restic-Browser Team",
+			"FileDescription": "Restic Backup Browser GUI",
+			"LegalCopyright": "See https://github.com/emuell/restic-browser",
+			"ProductName": "Restic-Browser",
+			"Comments": "Built using Wails: https://wails.io"
 		}
 	}
 }

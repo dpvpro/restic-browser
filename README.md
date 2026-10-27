@@ -4,7 +4,7 @@
 
 A simple, cross-platform [restic backup](https://github.com/restic/restic) GUI for browsing and restoring restic repositories. 
 
-Built with [Wails2](https://wails.io), based on leaanthony's [Restoric](https://github.com/leaanthony/restoric) PoC. 
+Built with [Wails3](https://v3.wails.io), based on leaanthony's [Restoric](https://github.com/leaanthony/restoric) PoC. 
 
 
 ## Download
@@ -54,19 +54,19 @@ pass the path to the restic executable *as argument*: `Restic-Browser[.exe] --re
 - macOS 10.14 or later
 #### Linux:
 - Linux with GLIBC_2.31 or later (e.g. Ubuntu 20.04 or later)
-- WebKit2 (install via `apt install libwebkit2gtk-4.0` on Ubuntu)
+- GTK4 and WebKitGTK 6.0 (install via `apt install libgtk-4-dev libwebkitgtk-6.0-dev` on Ubuntu)
 
 
 ## Development
 
 ### Dependencies
 
-* Follow the [Wails2 Installation Docs](https://wails.io/docs/gettingstarted/installation) to install Wails2 for your platform.
+* Follow the [Wails3 Installation Docs](https://v3.wails.io/getting-started/installation/) to install the `wails3` CLI for your platform.
 * Install [restic](https://github.com/restic/restic/releases/) and *make sure it is included in your $PATH*. 
 
 ### Front-end and App Development
 
-To work in live development mode with automatic hot-reloading, run `wails dev` in the root directory. 
+To work in live development mode with automatic hot-reloading, run `wails3 dev` in the root directory. 
 
 ### Go Backend Debugging
 
@@ -74,7 +74,8 @@ To debug the Wails Go application code, you can use the included startup tasks o
 
 ### Building Production Packages
 
-To build a redistributable package in production mode, use `wails build -tags production,desktop` or use the default build task in vscode.
+To build a redistributable package in production mode, use `wails3 build` (the binary is written to `bin/`).
+To create platform packages, use `wails3 package`.
 
 
 ## License

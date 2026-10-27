@@ -7,10 +7,10 @@
       "options": {
         "cwd": "${workspaceFolder}"
       },
-      "command": "wails",
+      "command": "wails3",
       "args": [
         "build",
-        "-debug"
+        "DEV=true"
       ]
     },
     {
@@ -19,7 +19,7 @@
       "options": {
         "cwd": "${workspaceFolder}"
       },
-      "command": "wails",
+      "command": "wails3",
       "args": [
         "build"
       ]

@@ -1,6 +1,6 @@
 import * as mobx from 'mobx';
 
-import { restic } from '../../wailsjs/go/models';
+import { restic } from '../models';
 
 // -------------------------------------------------------------------------------------------------
 

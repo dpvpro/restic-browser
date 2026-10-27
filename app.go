@@ -13,12 +13,11 @@ import (
 
 	"github.com/leaanthony/sail/fs"
 	"github.com/pkg/errors"
-	"github.com/wailsapp/wails/v2/pkg/runtime"
+	"github.com/wailsapp/wails/v3/pkg/application"
 	"golang.org/x/text/encoding/unicode"
 )
 
 type ResticBrowserApp struct {
-	context     *context.Context
 	tempPath    string
 	restic      *restic.Restic
 	resticError error
@@ -40,83 +39,99 @@ func NewResticBrowser(resticPath *string) *ResticBrowserApp {
 }
 
 func (r *ResticBrowserApp) showWarning(title, message string) {
-	r.showMessage(title, message, "warning")
+	r.showMessage(title, message, application.WarningDialogType, nil)
 }
 
 func (r *ResticBrowserApp) showError(title, message string) {
-	r.showMessage(title, message, "error")
+	r.showMessage(title, message, application.ErrorDialogType, nil)
 }
 
+// showConfirmation asks the user a question and blocks until one of the buttons
+// has been clicked.
 func (r *ResticBrowserApp) showConfirmation(title, message string) bool {
-	messageOptions := runtime.MessageDialogOptions{
-		Type:    "question",
-		Title:   title,
-		Message: message,
-		Buttons: []string{"Yes", "No"},
-	}
-	result, err := runtime.MessageDialog(*r.context, messageOptions)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to show confirmation message: %s\n", err.Error())
-		return false
-	}
-	return (result == "Yes")
+	result := make(chan bool, 1)
+	dialog := application.Get().Dialog.Question()
+	dialog.SetTitle(title)
+	dialog.SetMessage(message)
+	dialog.AddButton("Yes").OnClick(func() {
+		result <- true
+	})
+	noButton := dialog.AddButton("No")
+	noButton.OnClick(func() {
+		result <- false
+	})
+	dialog.SetCancelButton(noButton)
+	dialog.Show()
+	return <-result
 }
 
-func (r *ResticBrowserApp) showMessage(title, message string, messageType runtime.DialogType) {
-	messageOptions := runtime.MessageDialogOptions{
-		Type:    messageType,
-		Title:   title,
-		Message: message,
-		Buttons: []string{"Okay"},
+// showMessage displays a message dialog. If onClose is not nil, it is called
+// when the user dismisses the dialog.
+func (r *ResticBrowserApp) showMessage(title, message string, messageType application.DialogType, onClose func()) {
+	app := application.Get()
+	var dialog *application.MessageDialog
+	switch messageType {
+	case application.ErrorDialogType:
+		dialog = app.Dialog.Error()
+	case application.QuestionDialogType:
+		dialog = app.Dialog.Question()
+	default:
+		dialog = app.Dialog.Warning()
 	}
-	_, err := runtime.MessageDialog(*r.context, messageOptions)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to show error message: %s\n", err.Error())
+	dialog.SetTitle(title)
+	dialog.SetMessage(message)
+	button := dialog.AddButton("Okay")
+	if onClose != nil {
+		button.OnClick(onClose)
 	}
+	dialog.Show()
 }
 
-func (r *ResticBrowserApp) Startup(ctx context.Context) {
-	// memorize context
-	r.context = &ctx
+func (r *ResticBrowserApp) ServiceStartup(ctx context.Context, _ application.ServiceOptions) error {
 	// create app temp dir
 	tempPath, err := os.MkdirTemp(os.TempDir(), "restic-browser")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to create app temp dir: %s\n", err.Error())
 	}
 	r.tempPath = tempPath
+	return nil
 }
 
-func (r *ResticBrowserApp) DomReady(ctx context.Context) {
+func (r *ResticBrowserApp) DomReady() {
 	// warn about missing restic program: this is the first time we can show a dialog
 	if r.restic == nil {
 		message := fmt.Sprintf(
 			"Failed to find restic program: %s\n\n", r.resticError.Error()) +
 			"Please select your installed restic binary manually in the following dialog."
-		r.showWarning("Restic Binary Missing", message)
-		selectFileOptions := runtime.OpenDialogOptions{
-			DefaultFilename:            restic.ResticProgramName(),
-			Title:                      "Please select your restic program",
-			ShowHiddenFiles:            true,
-			TreatPackagesAsDirectories: true,
-		}
-		// then ask to locate the restic binary manually
-		path, err := runtime.OpenFileDialog(ctx, selectFileOptions)
-		if err == nil && path != "" {
-			r.restic, err = restic.NewResticFromPath(path)
-			if err != nil {
-				r.showError("Restic Binary Error",
-					fmt.Sprintf("Failed to set restic binary: %s", err.Error()))
-			}
+		r.showMessage("Restic Binary Missing", message, application.WarningDialogType, r.selectResticBinary)
+	}
+}
+
+// selectResticBinary asks the user to locate the restic binary manually.
+func (r *ResticBrowserApp) selectResticBinary() {
+	path, err := application.Get().Dialog.OpenFile().
+		SetTitle("Please select your restic program").
+		ShowHiddenFiles(true).
+		TreatsFilePackagesAsDirectories(true).
+		CanChooseFiles(true).
+		CanChooseDirectories(false).
+		PromptForSingleSelection()
+	if err == nil && path != "" {
+		r.restic, err = restic.NewResticFromPath(path)
+		if err != nil {
+			r.showError("Restic Binary Error",
+				fmt.Sprintf("Failed to set restic binary: %s", err.Error()))
 		}
 	}
 }
 
-func (r *ResticBrowserApp) Shutdown(ctx context.Context) {
+func (r *ResticBrowserApp) ServiceShutdown() error {
 	// remove app temp dir
 	err := os.RemoveAll(r.tempPath)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to remove app temp dir: %s\n", err.Error())
 	}
+	return nil
 }
 
 func (r *ResticBrowserApp) OpenFileOrUrl(path string) error {
@@ -210,17 +225,13 @@ func (r *ResticBrowserApp) DefaultRepoLocation() restic.Location {
 }
 
 func (r *ResticBrowserApp) ReadPasswordFromFile() (string, error) {
-	options := runtime.OpenDialogOptions{
-		DefaultDirectory:           "",
-		DefaultFilename:            "",
-		Title:                      "Please select a password file",
-		Filters:                    []runtime.FileFilter{},
-		ShowHiddenFiles:            true,
-		CanCreateDirectories:       false,
-		ResolvesAliases:            true,
-		TreatPackagesAsDirectories: true,
-	}
-	filename, err := runtime.OpenFileDialog(*r.context, options)
+	filename, err := application.Get().Dialog.OpenFile().
+		SetTitle("Please select a password file").
+		ShowHiddenFiles(true).
+		ResolvesAliases(true).
+		TreatsFilePackagesAsDirectories(true).
+		CanCreateDirectories(false).
+		PromptForSingleSelection()
 	if err == nil && filename == "" {
 		return "", nil
 	}
@@ -235,17 +246,15 @@ func (r *ResticBrowserApp) ReadPasswordFromFile() (string, error) {
 }
 
 func (r *ResticBrowserApp) SelectLocalRepo() (string, error) {
-	options := runtime.OpenDialogOptions{
-		DefaultDirectory:           "",
-		DefaultFilename:            "",
-		Title:                      "Please select a restic repository directory",
-		Filters:                    []runtime.FileFilter{},
-		ShowHiddenFiles:            true,
-		CanCreateDirectories:       false,
-		ResolvesAliases:            true,
-		TreatPackagesAsDirectories: true,
-	}
-	dir, err := runtime.OpenDirectoryDialog(*r.context, options)
+	dir, err := application.Get().Dialog.OpenFile().
+		SetTitle("Please select a restic repository directory").
+		ShowHiddenFiles(true).
+		ResolvesAliases(true).
+		TreatsFilePackagesAsDirectories(true).
+		CanCreateDirectories(false).
+		CanChooseFiles(false).
+		CanChooseDirectories(true).
+		PromptForSingleSelection()
 	if err == nil && dir == "" {
 		return "", nil
 	}
@@ -287,17 +296,16 @@ func (r *ResticBrowserApp) RestoreFile(snapshotID string, file *restic.File) (st
 	if snapshot == nil {
 		return "", fmt.Errorf("%s is not a valid snapshot ID", snapshotID)
 	}
-	options := runtime.OpenDialogOptions{
-		DefaultDirectory:           "",
-		DefaultFilename:            "",
-		Title:                      "Please select a target directory",
-		Filters:                    []runtime.FileFilter{},
-		ShowHiddenFiles:            true,
-		CanCreateDirectories:       true,
-		ResolvesAliases:            true,
-		TreatPackagesAsDirectories: true,
+	options := application.OpenFileDialogOptions{
+		Title:                           "Please select a target directory",
+		ShowHiddenFiles:                 true,
+		CanCreateDirectories:            true,
+		ResolvesAliases:                 true,
+		TreatsFilePackagesAsDirectories: true,
+		CanChooseFiles:                  false,
+		CanChooseDirectories:            true,
 	}
-	targetPath, err := runtime.OpenDirectoryDialog(*r.context, options)
+	targetPath, err := application.Get().Dialog.OpenFileWithOptions(&options).PromptForSingleSelection()
 	if err != nil {
 		return "", err
 	}
@@ -338,17 +346,16 @@ func (r *ResticBrowserApp) DumpFile(snapshotID string, file *restic.File) (strin
 	if snapshot == nil {
 		return "", fmt.Errorf("%s is not a valid snapshot ID", snapshotID)
 	}
-	options := runtime.OpenDialogOptions{
-		DefaultDirectory:           "",
-		DefaultFilename:            "",
-		Title:                      "Please select a target directory",
-		Filters:                    []runtime.FileFilter{},
-		ShowHiddenFiles:            true,
-		CanCreateDirectories:       true,
-		ResolvesAliases:            true,
-		TreatPackagesAsDirectories: true,
+	options := application.OpenFileDialogOptions{
+		Title:                           "Please select a target directory",
+		ShowHiddenFiles:                 true,
+		CanCreateDirectories:            true,
+		ResolvesAliases:                 true,
+		TreatsFilePackagesAsDirectories: true,
+		CanChooseFiles:                  false,
+		CanChooseDirectories:            true,
 	}
-	targetPath, err := runtime.OpenDirectoryDialog(*r.context, options)
+	targetPath, err := application.Get().Dialog.OpenFileWithOptions(&options).PromptForSingleSelection()
 	if err != nil {
 		return "", err
 	}

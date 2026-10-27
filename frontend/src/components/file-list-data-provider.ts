@@ -2,7 +2,7 @@ import {
   GridDataProviderCallback, GridDataProviderParams, GridSorterDefinition 
 } from "@vaadin/grid";
 
-import { restic } from "../../wailsjs/go/models";
+import { restic } from "../models";
 
 // -------------------------------------------------------------------------------------------------
 

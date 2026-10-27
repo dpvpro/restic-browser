@@ -6,7 +6,7 @@ import * as mobx from 'mobx';
 import { appState } from '../states/app-state';
 import { locationInfos, RepositoryType, Location } from '../states/location';
 
-import { SelectLocalRepo, ReadPasswordFromFile } from '../../wailsjs/go/main/ResticBrowserApp';
+import { SelectLocalRepo, ReadPasswordFromFile } from '../../bindings/restic-browser/resticbrowserapp';
 
 import { Notification } from '@vaadin/notification';
 
