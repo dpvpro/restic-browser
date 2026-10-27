@@ -59,6 +59,8 @@ pass the path to the restic executable *as argument*: `Restic-Browser[.exe] --re
 
 ## Development
 
+Detailed build and run instructions (including prerequisites and packaging) are in [BUILD.md](./BUILD.md).
+
 ### Dependencies
 
 * Follow the [Wails3 Installation Docs](https://v3.wails.io/getting-started/installation/) to install the `wails3` CLI for your platform.
