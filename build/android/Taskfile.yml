@@ -254,7 +254,7 @@ tasks:
       - build/android/overlay.json
       - build/android/gen/main_android.gen.go
     cmds:
-      - wails3 android overlay:gen -out build/android/overlay.json -config build/config.yml
+      - wails android overlay:gen -out build/android/overlay.json -config build/config.yml
 
   generate:android:bindings:
     internal: true
@@ -268,7 +268,7 @@ tasks:
     cmds:
       # Bindings are generated from the Go AST; CGO is disabled so the NDK
       # is not required for this step
-      - wails3 generate bindings -f '-tags android' -clean=true
+      - wails generate bindings -f '-tags android' -clean=true
     env:
       GOOS: android
       CGO_ENABLED: 0

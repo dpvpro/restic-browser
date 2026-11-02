@@ -1,10 +1,10 @@
-<img src="./frontend/src/assets/images/eye.png" alt="drawing" height="48px"/> <img src="./frontend/src/assets/images/logo.png" alt="drawing" height="48px"/> 
+<img src="./frontend/src/assets/images/eye.png" alt="drawing" height="48px"/> <img src="./frontend/src/assets/images/logo.png" alt="drawing" height="48px"/>
 
 ---
 
-A simple, cross-platform [restic backup](https://github.com/restic/restic) GUI for browsing and restoring restic repositories. 
+A simple, cross-platform [restic backup](https://github.com/restic/restic) GUI for browsing and restoring restic repositories.
 
-Built with [Wails3](https://v3.wails.io), based on leaanthony's [Restoric](https://github.com/leaanthony/restoric) PoC. 
+Built with [Wails3](https://v3.wails.io), based on leaanthony's [Restoric](https://github.com/leaanthony/restoric) PoC.
 
 
 ## Download
@@ -19,7 +19,7 @@ Prebuilt binaries can be downloaded from the [GitHub releases](https://github.co
 * *Restores* selected files or folders to a desired location.
 * *Opens* selected files by moving them to TEMP, then opens them with your operating system's default programs.
 
-This is not a fullblown restic backup GUI - it only allows you to *browse* existing repositories!  
+This is not a fullblown restic backup GUI - it only allows you to *browse* existing repositories!
 
 ![Screenshot](./screenshot.png "Restic Browser")
 
@@ -28,7 +28,7 @@ This is not a fullblown restic backup GUI - it only allows you to *browse* exist
 
 The UI is navigatable via keyboard shortcuts. To change the focus area, hit `Tab` + `Shift-Tab` keys.
 
-### Global Shortcuts: 
+### Global Shortcuts:
 
 - `Control/CMD + O`: Open new repository
 
@@ -45,7 +45,7 @@ The UI is navigatable via keyboard shortcuts. To change the focus area, hit `Tab
 ## System Requirements
 
 #### All platforms
-- Install [restic](https://github.com/restic/restic/releases/) and *make sure it is included in your $PATH* or 
+- Install [restic](https://github.com/restic/restic/releases/) and *make sure it is included in your $PATH* or
 pass the path to the restic executable *as argument*: `restic-browser[.exe] --restic="PATH/TO/restic[.exe]"`.
 
 #### Windows:
@@ -63,21 +63,21 @@ Detailed build and run instructions (including prerequisites and packaging) are 
 
 ### Dependencies
 
-* Follow the [Wails3 Installation Docs](https://v3.wails.io/getting-started/installation/) to install the `wails3` CLI for your platform.
-* Install [restic](https://github.com/restic/restic/releases/) and *make sure it is included in your $PATH*. 
+* Follow the [Wails3 Installation Docs](https://v3.wails.io/getting-started/installation/) to install the `wails` CLI for your platform.
+* Install [restic](https://github.com/restic/restic/releases/) and *make sure it is included in your $PATH*.
 
 ### Front-end and App Development
 
-To work in live development mode with automatic hot-reloading, run `wails3 dev` in the root directory. 
+To work in live development mode with automatic hot-reloading, run `wails dev` in the root directory.
 
 ### Go Backend Debugging
 
-To debug the Wails Go application code, you can use the included startup tasks of vscode. If you press "F5" in vscode, the application will be built in debug mode and then started.   
+To debug the Wails Go application code, you can use the included startup tasks of vscode. If you press "F5" in vscode, the application will be built in debug mode and then started.
 
 ### Building Production Packages
 
-To build a redistributable package in production mode, use `wails3 build` (the binary is written to `bin/`).
-To create platform packages, use `wails3 package`.
+To build a redistributable package in production mode, use `wails build` (the binary is written to `bin/`).
+To create platform packages, use `wails package`.
 
 
 ## License
@@ -87,4 +87,4 @@ MIT license. See [LICENSE](./LICENSE) for the full text.
 
 ## Contribute
 
-Patches are welcome! Please fork the latest git repository and create a feature branch. 
+Patches are welcome! Please fork the latest git repository and create a feature branch.

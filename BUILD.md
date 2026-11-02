@@ -2,7 +2,7 @@
 
 ## Предварительные требования
 
-- **Wails3 CLI** v3.x — проверка: `wails3 version`
+- **Wails3 CLI** v3.x — проверка: `wails version`
 - **Go** 1.26+ — проверка: `go version`
 - **Node.js + npm** (используется Vite 7)
 - **Linux:** GTK4 + WebKitGTK 6.0
@@ -14,7 +14,7 @@
 
 ```bash
 cd restic-browser
-wails3 dev
+wails dev
 ```
 
 Что происходит:
@@ -26,12 +26,12 @@ wails3 dev
 
 Выход — `Ctrl+C`.
 
-Эквивалент через Taskfile: `wails3 task dev`.
+Эквивалент через Taskfile: `wails task dev`.
 
 ## Сборка
 
 ```bash
-wails3 build
+wails build
 ```
 
 Результат — `bin/restic-browser`. Production-ассеты фронтенда встраиваются в бинарник.
@@ -53,7 +53,7 @@ wails3 build
 ## Пакеты для распространения
 
 ```bash
-wails3 package
+wails package
 ```
 
 Создаёт платформенные пакеты на основе `build/config.yml`:
@@ -70,10 +70,10 @@ Linux-пакеты устанавливают бинарник как `/usr/loca
 
 | Задача | Команда |
 |---|---|
-| Запустить уже собранный бинарник | `wails3 task run` |
+| Запустить уже собранный бинарник | `wails task run` |
 | Только пересобрать фронтенд | `cd frontend && npm run build` |
 | Проверка типов TypeScript | `cd frontend && npx tsc` |
-| Перегенерировать биндинги (после изменения экспортируемых методов Go) | `wails3 generate bindings -ts -clean=true` |
+| Перегенерировать биндинги (после изменения экспортируемых методов Go) | `wails generate bindings -ts -clean=true` |
 | Тесты бэкенда | `go test ./backend/...` |
 | Полная очистка | `rm -rf bin frontend/dist frontend/bindings` |
 
@@ -84,7 +84,7 @@ Linux-пакеты устанавливают бинарник как `/usr/loca
 ```bash
 RESTIC_REPOSITORY=/path/to/repo \
 RESTIC_PASSWORD=secret \
-wails3 dev
+wails dev
 ```
 
 Также поддерживаются:
@@ -95,10 +95,10 @@ wails3 dev
 
 ## Отладка Go-кода
 
-В `.vscode/launch.json` есть конфигурация `Debug Restic-Browser (GO)`. По `F5` выполняется задача `wails3 build DEV=true`, затем запускается `bin/restic-browser` с переменными для тестового репозитория (`backend/restic/test-repo`).
+В `.vscode/launch.json` есть конфигурация `Debug Restic-Browser (GO)`. По `F5` выполняется задача `wails build DEV=true`, затем запускается `bin/restic-browser` с переменными для тестового репозитория (`backend/restic/test-repo`).
 
 ## Примечания
 
-- `wails3 dev` не пробрасывает свои аргументы приложению. Если нужен нестандартный `--restic`, используйте собранный `./bin/restic-browser --restic=...`.
+- `wails dev` не пробрасывает свои аргументы приложению. Если нужен нестандартный `--restic`, используйте собранный `./bin/restic-browser --restic=...`.
 - Биндинги в `frontend/bindings` генерируются автоматически; при изменении сигнатур экспортируемых методов Go их нужно перегенерировать (команда выше).
-- В dev-режиме после полной перезагрузки страницы приложение может показать «No repository selected» — репозиторий откроется кнопкой **Open Repository** или после перезапуска `wails3 dev`.
+- В dev-режиме после полной перезагрузки страницы приложение может показать «No repository selected» — репозиторий откроется кнопкой **Open Repository** или после перезапуска `wails dev`.
